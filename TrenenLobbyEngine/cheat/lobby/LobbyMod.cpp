@@ -5,15 +5,20 @@ Singleton_CPP(LobbyMod);
 /*
 	NOTE TO ALL USING THIS:
 
-	The buffer passed in pvMsgBody IS INFACT a proper data structure that should be handled properly
+	The buffer passed in pvMsgBody is infact a proper data structure that should be handled properly
+
+	but 
+	1. im writing this at 1am atm
+	2. im only writing it cuz im sick of people asking questions on how it works
 
 	BUT IN THIS IMPLEMENTATION I AM BEING LAZY JUST TO GIVE EXAMPLE SO I CAN STOP ANSWERING QUESTIONS
 	( ++ it will be pretty obv if they just pasted entire thing cuz they wont parse shit properly :O )
 
 	also there is a very slight amount of antipasta within this just to make sure peeps dont 100% C+P :P
+	if u find it keep it hush hush (:
 
 	also to my future employers yea i know this is really poorly done just ignore this project and look at my
-	other stuff <3 thanks :)
+	other stuff <3 k thanks :)
 
 */
 
@@ -22,9 +27,10 @@ bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBod
 	const char* pMessage = (const char*)pvMsgBody;
 	const char* MessageIterator = pMessage + 5; // 5 Bytes in we have the big SysSession::Command
 
-	// For those who wish to look at the structure itself
 #if 0
-	std::ofstream DumpFile = std::ofstream("LobbyChatMessageDump.bin", std::ios::binary);
+	// For those who wish to look at the structure of the messages
+	auto DumpFile = std::ofstream("LobbyChatMessageDump.bin", std::ios::binary | std::ios::trunc);
+
 	if (DumpFile.is_open())
 	{
 		DumpFile.write((const char*)pvMsgBody, cubMsgBody);
@@ -32,27 +38,20 @@ bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBod
 	}
 #endif
 
+	// Do note this is not all the messages sent - have a poke around and dump some out and figure what they are!
+
 	if (strcmp(MessageIterator, "SysSession::Command") == 0)
 	{
 		MessageIterator = FindStringEnd(MessageIterator) + 1;
 
 		if (strcmp(MessageIterator, "Game::Chat") == 0)
-		{
 			return ModifyStandardChatMessage(steamIdLobby, pMessage, cubMsgBody);
-		}
+
 		else if (strcmp(MessageIterator, "Game::EnteringQueue") == 0)
-		{
 			return OnEnterMatchmakingQueue(steamIdLobby, pMessage, cubMsgBody);
-		}
+
 		else if (strcmp(MessageIterator, "Game::ChatInviteMessage") == 0)
-		{
 			return OnChatInviteMessage(steamIdLobby, pMessage, cubMsgBody);
-		}
-		// u can do this urself
-		//else if (strcmp(MessageIterator, "Game::SetPlayerRanking") == 0)
-		//{
-		//	return OnSetPlayerRanking(Lobby, pMessage, MessageSize);
-		//}
 	}
 
 	return false;
