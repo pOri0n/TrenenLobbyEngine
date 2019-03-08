@@ -1,6 +1,7 @@
 #include <pch.h>
 
 Singleton_CPP(Logger);
+std::shared_ptr<spdlog::logger> Logger::Log;
 
 void Logger::Init()
 {
