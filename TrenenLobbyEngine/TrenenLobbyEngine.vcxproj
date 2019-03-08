@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClCompile Include="cheat\config\config.cpp" />
     <ClCompile Include="cheat\hooking\Hooks.cpp" />
+    <ClCompile Include="cheat\imgui\ui.cpp" />
     <ClCompile Include="cheat\lobby\LobbyMod.cpp" />
     <ClCompile Include="engine\interfaces.cpp" />
     <ClCompile Include="entry\EntryPoint.cpp" />
@@ -97,10 +98,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui.cpp" />
+    <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
+    <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cheat\cheat.h" />
     <ClInclude Include="cheat\hooking\Hooks.h" />
+    <ClInclude Include="cheat\imgui\ui.h" />
     <ClInclude Include="cheat\lobby\LobbyMod.h" />
     <ClInclude Include="cheat\config\config.h" />
     <ClInclude Include="engine\engine.h" />
@@ -110,6 +115,12 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="util\SingletonMacro.h" />
     <ClInclude Include="util\util.h" />
+    <ClInclude Include="vendor\imgui\imconfig.h" />
+    <ClInclude Include="vendor\imgui\imgui.h" />
+    <ClInclude Include="vendor\imgui\imgui_internal.h" />
+    <ClInclude Include="vendor\imgui\imstb_rectpack.h" />
+    <ClInclude Include="vendor\imgui\imstb_textedit.h" />
+    <ClInclude Include="vendor\imgui\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
