@@ -19,6 +19,6 @@ void cInterfaces::Setup()
 	SteamMatchmaking = SteamClient()->GetISteamMatchmaking(GetHSteamUser(), GetHSteamPipe(), "SteamMatchMaking009");
 	SteamFriends = SteamClient()->GetISteamFriends(GetHSteamUser(), GetHSteamPipe(), "SteamFriends015");
 
-	TLE_DEBUG("INTERFACE SteamMatchMaking009: {0:08x}", (DWORD)SteamMatchmaking());
-	TLE_DEBUG("INTERFACE SteamFriends015: {0:08x}",		(DWORD)SteamFriends());
+	TLE_DEBUG("INTERFACE SteamMatchMaking009: 0x{0:08x}",	(DWORD)SteamMatchmaking());
+	TLE_DEBUG("INTERFACE SteamFriends015: 0x{0:08x}",		(DWORD)SteamFriends());
 }
