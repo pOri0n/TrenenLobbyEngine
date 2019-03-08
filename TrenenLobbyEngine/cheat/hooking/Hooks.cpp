@@ -7,9 +7,8 @@ bool __stdcall SendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody
 	typedef bool(__thiscall* SendLobbyChatMessage_t)(ISteamMatchmaking*, CSteamID, const void*, int);
 	static auto Original_SendLobbyChatMessage = Hooks::Get()->SteamMatchmaking.Original<SendLobbyChatMessage_t>(26);
 	
-	TLE_DEBUG("SendLobbyChatMessage Called");
-
-	return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
+	if (!LobbyMod::Get()->InterpretLobbyMessage(steamIdLobby, pvMsgBody, cubMsgBody))
+		return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
 }
 
 void Hooks::Init()

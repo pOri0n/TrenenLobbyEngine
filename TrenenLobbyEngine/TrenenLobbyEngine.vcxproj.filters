@@ -30,6 +30,9 @@
     <ClCompile Include="cheat\hooking\Hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cheat\lobby\LobbyMod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util\util.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cheat\hooking\Hooks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat\lobby\LobbyMod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

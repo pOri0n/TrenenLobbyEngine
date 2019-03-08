@@ -1,0 +1,196 @@
+#include <pch.h>
+
+Singleton_CPP(LobbyMod);
+
+/*
+	NOTE TO ALL USING THIS:
+
+	The buffer passed in pvMsgBody IS INFACT a proper data structure that should be handled properly
+
+	BUT IN THIS IMPLEMENTATION I AM BEING LAZY JUST TO GIVE EXAMPLE SO I CAN STOP ANSWERING QUESTIONS
+	( ++ it will be pretty obv if they just pasted entire thing cuz they wont parse shit properly :O )
+
+	also there is a very slight amount of antipasta within this just to make sure peeps dont 100% C+P :P
+*/
+
+bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
+{
+	const char* pMessage = (const char*)pvMsgBody;
+	const char* MessageIterator = pMessage + 5; // 5 Bytes in we have the big SysSession::Command
+
+	// For those who wish to look at the structure itself
+#if 0
+	std::ofstream DumpFile = std::ofstream("LobbyChatMessageDump.bin", std::ios::binary);
+	if (DumpFile.is_open())
+	{
+		DumpFile.write((const char*)pvMsgBody, cubMsgBody);
+		DumpFile.close();
+	}
+#endif
+
+	if (strcmp(MessageIterator, "SysSession::Command") == 0)
+	{
+		MessageIterator = FindStringEnd(MessageIterator) + 1;
+
+		if (strcmp(MessageIterator, "Game::Chat") == 0)
+		{
+			return ModifyStandardChatMessage(steamIdLobby, pMessage, cubMsgBody);
+		}
+		else if (strcmp(MessageIterator, "Game::EnteringQueue") == 0)
+		{
+			return OnEnterMatchmakingQueue(steamIdLobby, pMessage, cubMsgBody);
+		}
+		else if (strcmp(MessageIterator, "Game::ChatInviteMessage") == 0)
+		{
+			//return OnChatInviteMessage(Lobby, pMessage, MessageSize);
+		}
+		else if (strcmp(MessageIterator, "Game::SetPlayerRanking") == 0)
+		{
+			//return OnSetPlayerRanking(Lobby, pMessage, MessageSize);
+		}
+	}
+
+	return false;
+}
+
+const char* LobbyMod::FindStringEnd(const char* Message)
+{
+	while (*Message != 0)
+		Message++;
+	return Message + 1; // Include null terminator
+}
+
+const char* LobbyMod::FindString(const char* in, const char* pat, unsigned int mxdst)
+{
+	for (unsigned int i = 0; i < mxdst; i++)
+	{
+		if (strcmp(in + i, pat) == 0)
+			return in + i;
+	}
+
+	return in;
+}
+
+bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
+{
+	// Note: green / yellow require player to be lobby owner
+	const std::vector<std::pair<std::string, std::string>> ChatColourTypes =
+	{
+		{ "Game::Chat",				"chat"	 }, // Standard
+		{ "Game::ChatReportError",	"error"  }, // Red
+		{ "Game::ChatReportGreen",	"green"  }, // well i mean really do i have to spell it out for these ones 
+		{ "Game::ChatReportYellow", "yellow" }
+	};
+
+	const auto ChatColour = ChatColourTypes[1 /* S.LobbyChatColour() */];
+
+	TLE_DEBUG("Game::Chat REPLACED WITH {0}", ChatColour.first);
+
+	// ##### SysSession::Command ## 
+	const std::vector<char> MessageStage0 =
+	{
+		0x00, 0x00, 0x35, 0x71,
+		0x00, 0x53, 0x79, 0x73,
+		0x53, 0x65, 0x73, 0x73,
+		0x69, 0x6F, 0x6e, 0x3a,
+		0x3a, 0x43, 0x6F, 0x6d,
+		0x6d, 0x61, 0x6e, 0x64,
+		0x00, 0x00
+	};
+
+	// ## run # all ## xuid #
+	const std::vector<char> MessageStage1 =
+	{
+		0x00, 0x01, 0x72, 0x75,
+		0x6E, 0x00, 0x61, 0x6C,
+		0x6c, 0x00, 0x07, 0x78,
+		0x75, 0x69, 0x64, 0x00,
+	};
+
+	// XUID ( steam id ) currently starts at 0x34 for chat messages
+	const std::vector<char> UserXUID =
+	{
+		pMessage[0x34], pMessage[0x35], pMessage[0x36], pMessage[0x37],
+		pMessage[0x38], pMessage[0x39], pMessage[0x3A], pMessage[0x3B]
+	};
+
+	// Note, we dont accually have to copy in the name to the message
+	// as the game engine just gets player name from the XUID, so pass 
+	// in a null string
+
+	// # name ###
+	const std::vector<char> MessageStage2 =
+	{
+		 0x01, 0x6e, 0x61, 0x6d,
+		 0x65, 0x00, 0x00, 0x01
+	};
+
+	// ####
+	const std::vector<char> MessageStage3 =
+	{
+		0x00, 0x0b, 0x0b, 0x0b
+	};
+
+	// Your message is always stored right after chat
+	const auto MessageText = std::string(FindString(pMessage, "chat") + 5);
+
+	// Generate Our Message
+	auto GeneratedMessage = MessageStage0;
+
+	std::copy(ChatColour.first.begin(), ChatColour.first.end(), std::back_inserter(GeneratedMessage));
+	std::copy(MessageStage1.begin(), MessageStage1.end(), std::back_inserter(GeneratedMessage));
+	std::copy(UserXUID.begin(), UserXUID.end(), std::back_inserter(GeneratedMessage));
+	std::copy(MessageStage2.begin(), MessageStage2.end(), std::back_inserter(GeneratedMessage));
+	std::copy(ChatColour.second.begin(), ChatColour.second.end(), std::back_inserter(GeneratedMessage));
+	GeneratedMessage.push_back(0); // strings dont seem to copy over null terminator :(
+
+	// if user wants their username within the chat message
+	// useful if u wanna type and look cool
+	// but if turned off u can type shit like
+	// "PLAYER has been convicted by overwatch"
+	// and troll the shit out of people
+	//if (S.LobbyChatColour() != 0 && S.LobbyPrependName())
+	{
+		const auto NameText = std::string(FindString(pMessage, "name") + 5) + " ";
+		std::copy(NameText.begin(), NameText.end(), std::back_inserter(GeneratedMessage));
+	}
+
+	std::copy(MessageText.begin(), MessageText.end(), std::back_inserter(GeneratedMessage));
+
+	/*
+	// Sending enough messages will cause the chat box
+	// in CS to break!, probably a layout glitch
+	// sending lots of endlines makes it happen after
+	// a few messages
+	if (S.LobbyChatEndlineSpam())
+	{
+		// Speed up that insert :)
+		GeneratedMessage.reserve(GeneratedMessage.size() + 10000);
+		for (auto i = 0; i < 10000; i++)
+			GeneratedMessage.push_back(0x0A);
+	}
+	*/
+
+	std::copy(MessageStage3.begin(), MessageStage3.end(), std::back_inserter(GeneratedMessage));
+
+	return CallOriginalSendLobbyChatMessage(Lobby, GeneratedMessage.data(), GeneratedMessage.size());
+}
+
+bool LobbyMod::OnEnterMatchmakingQueue(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
+{
+	// This is a big RIP to peoples games lol
+	const auto NukePower = std::powf(10, 0/* S.ChatRepeatExponent() */);
+
+	for (auto i = 0.f; i < NukePower; i++)
+		CallOriginalSendLobbyChatMessage(Lobby, pMessage, MessageSize);
+
+	return true;
+}
+
+bool LobbyMod::CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
+{
+	typedef bool(__thiscall * SendLobbyChatMessage_t)(ISteamMatchmaking*, CSteamID, const void*, int);
+	static auto Original_SendLobbyChatMessage = Hooks::Get()->SteamMatchmaking.Original<SendLobbyChatMessage_t>(26);
+
+	return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
+}

@@ -88,6 +88,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cheat\hooking\Hooks.cpp" />
+    <ClCompile Include="cheat\lobby\LobbyMod.cpp" />
     <ClCompile Include="engine\interfaces.cpp" />
     <ClCompile Include="entry\EntryPoint.cpp" />
     <ClCompile Include="util\logging\logging.cpp" />
@@ -99,6 +100,7 @@
   <ItemGroup>
     <ClInclude Include="cheat\cheat.h" />
     <ClInclude Include="cheat\hooking\Hooks.h" />
+    <ClInclude Include="cheat\lobby\LobbyMod.h" />
     <ClInclude Include="engine\engine.h" />
     <ClInclude Include="engine\interfaces.h" />
     <ClInclude Include="SDK\SDK.h" />
