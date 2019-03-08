@@ -9,7 +9,7 @@ Singleton_CPP(LobbyMod);
 
 	but 
 	1. im writing this at 1am atm
-	2. im only writing it cuz im sick of people asking questions on how it works
+	2. im only writing it cuz im sick of people asking questions on how it works dispite giving enough info
 
 	BUT IN THIS IMPLEMENTATION I AM BEING LAZY JUST TO GIVE EXAMPLE SO I CAN STOP ANSWERING QUESTIONS
 	( ++ it will be pretty obv if they just pasted entire thing cuz they wont parse shit properly :O )
