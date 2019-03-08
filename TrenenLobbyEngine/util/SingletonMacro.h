@@ -3,9 +3,9 @@
 // Implement Singletons
 #define Singleton(TYPE) \
 	public: \
-	static TYPE* Get() { return &Single; } \
+	static std::shared_ptr<TYPE> Get() { return Single; } \
 	private: \
-	static TYPE Single;
+	static std::shared_ptr<TYPE> Single;
 
 #define Singleton_CPP(TYPE) \
-	TYPE TYPE::Single;
+	std::shared_ptr<TYPE> TYPE::Single = std::make_shared<TYPE>();
