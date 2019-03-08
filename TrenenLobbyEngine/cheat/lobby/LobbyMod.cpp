@@ -11,6 +11,10 @@ Singleton_CPP(LobbyMod);
 	( ++ it will be pretty obv if they just pasted entire thing cuz they wont parse shit properly :O )
 
 	also there is a very slight amount of antipasta within this just to make sure peeps dont 100% C+P :P
+
+	also to my future employers yea i know this is really poorly done just ignore this project and look at my
+	other stuff <3 thanks :)
+
 */
 
 bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
@@ -42,12 +46,13 @@ bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBod
 		}
 		else if (strcmp(MessageIterator, "Game::ChatInviteMessage") == 0)
 		{
-			//return OnChatInviteMessage(Lobby, pMessage, MessageSize);
+			return OnChatInviteMessage(steamIdLobby, pMessage, cubMsgBody);
 		}
-		else if (strcmp(MessageIterator, "Game::SetPlayerRanking") == 0)
-		{
-			//return OnSetPlayerRanking(Lobby, pMessage, MessageSize);
-		}
+		// u can do this urself
+		//else if (strcmp(MessageIterator, "Game::SetPlayerRanking") == 0)
+		//{
+		//	return OnSetPlayerRanking(Lobby, pMessage, MessageSize);
+		//}
 	}
 
 	return false;
@@ -78,13 +83,13 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	{
 		{ "Game::Chat",				"chat"	 }, // Standard
 		{ "Game::ChatReportError",	"error"  }, // Red
-		{ "Game::ChatReportGreen",	"green"  }, // well i mean really do i have to spell it out for these ones 
+		{ "Game::ChatReportGreen",	"green"  }, // well i mean really do i have to spell it out for these two
 		{ "Game::ChatReportYellow", "yellow" }
 	};
 
-	const auto ChatColour = ChatColourTypes[1 /* S.LobbyChatColour() */];
+	const auto ChatColour = ChatColourTypes[ CFG->LobbyChat_ColourIndex ];
 
-	TLE_DEBUG("Game::Chat REPLACED WITH {0}", ChatColour.first);
+	TLE_INFO("Game::Chat REPLACED WITH {0}", ChatColour.first);
 
 	// ##### SysSession::Command ## 
 	const std::vector<char> MessageStage0 =
@@ -108,6 +113,7 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	};
 
 	// XUID ( steam id ) currently starts at 0x34 for chat messages
+	// Has to be current players steamid
 	const std::vector<char> UserXUID =
 	{
 		pMessage[0x34], pMessage[0x35], pMessage[0x36], pMessage[0x37],
@@ -116,7 +122,7 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 
 	// Note, we dont accually have to copy in the name to the message
 	// as the game engine just gets player name from the XUID, so pass 
-	// in a null string
+	// in a null string cuz we lazy
 
 	// # name ###
 	const std::vector<char> MessageStage2 =
@@ -145,32 +151,33 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	GeneratedMessage.push_back(0); // strings dont seem to copy over null terminator :(
 
 	// if user wants their username within the chat message
-	// useful if u wanna type and look cool
+	// useful if u wanna type and look cool and show ur name
 	// but if turned off u can type shit like
 	// "PLAYER has been convicted by overwatch"
-	// and troll the shit out of people
-	//if (S.LobbyChatColour() != 0 && S.LobbyPrependName())
+	// and troll other people
+
+	if (CFG->LobbyChat_ColourIndex != 0 && CFG->LobbyChat_PrependName)
 	{
 		const auto NameText = std::string(FindString(pMessage, "name") + 5) + " ";
 		std::copy(NameText.begin(), NameText.end(), std::back_inserter(GeneratedMessage));
 	}
 
+	// insert our custom message
 	std::copy(MessageText.begin(), MessageText.end(), std::back_inserter(GeneratedMessage));
 
-	/*
 	// Sending enough messages will cause the chat box
 	// in CS to break!, probably a layout glitch
 	// sending lots of endlines makes it happen after
 	// a few messages
-	if (S.LobbyChatEndlineSpam())
+	if (CFG->LobbyChat_EndlineSpam)
 	{
 		// Speed up that insert :)
 		GeneratedMessage.reserve(GeneratedMessage.size() + 10000);
+
 		for (auto i = 0; i < 10000; i++)
 			GeneratedMessage.push_back(0x0A);
 	}
-	*/
-
+	
 	std::copy(MessageStage3.begin(), MessageStage3.end(), std::back_inserter(GeneratedMessage));
 
 	return CallOriginalSendLobbyChatMessage(Lobby, GeneratedMessage.data(), GeneratedMessage.size());
@@ -178,13 +185,64 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 
 bool LobbyMod::OnEnterMatchmakingQueue(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
 {
-	// This is a big RIP to peoples games lol
-	const auto NukePower = std::powf(10, 0/* S.ChatRepeatExponent() */);
+	if (CFG->LobbyNuke_Enable)
+	{
+		// This is a big RIP to peoples games lol
+		const auto NukePower = std::powf(10, CFG->LobbyNuke_Exponent);
 
-	for (auto i = 0.f; i < NukePower; i++)
-		CallOriginalSendLobbyChatMessage(Lobby, pMessage, MessageSize);
+		for (auto i = 0.f; i < NukePower; i++)
+			CallOriginalSendLobbyChatMessage(Lobby, pMessage, MessageSize);
+		
+		return true;
+	}
 
-	return true;
+	return false;
+}
+
+bool LobbyMod::OnChatInviteMessage(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
+{
+	if (!CFG->LobbyInvite_HideInviteNames)
+		return false;
+
+	std::vector<char> Message;
+
+	// For remembering players :O
+	static std::map<uint64_t, unsigned int> Players;
+	static unsigned int PlayerCount = 0;
+
+	// The Friends steamid
+	const auto FriendXUID = *(uint64_t*)(pMessage + 0x51);
+
+	// If we havnt seen this player before assign him a his own number
+	if (!Players.count(FriendXUID))
+	{
+		Players[FriendXUID] = ++PlayerCount;
+	}
+
+	// Player's ID
+	const auto PlayerIndex = Players[FriendXUID];
+
+	// new playername
+	const std::string PlayerName = std::string("player #") + std::to_string(PlayerIndex);
+
+	// all those messages ending in ZERO BEE BEE BEE
+	const std::vector<char> MessageEnd =
+	{
+		0x00, 0x0b, 0x0b, 0x0b
+	};
+
+	// Copy the original message upto the players name
+	std::copy(pMessage, pMessage + 0x65, std::back_inserter(Message));
+	std::copy(PlayerName.begin(), PlayerName.end(), std::back_inserter(Message));
+	std::copy(MessageEnd.begin(), MessageEnd.end(), std::back_inserter(Message));
+
+	// Set XUID to a random steam account of mine so they can never tell which
+	// nonamer was invited even if they really wanted to!
+	*(uint64_t*)(Message.data() + 0x51) = 76561198881516729u;
+
+	TLE_INFO("Game::ChatInviteMessage - REPLACED PLAYER NAME WITH {0}", PlayerName);
+
+	return I.SteamMatchmaking()->SendLobbyChatMsg(Lobby, Message.data(), Message.size());
 }
 
 bool LobbyMod::CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
