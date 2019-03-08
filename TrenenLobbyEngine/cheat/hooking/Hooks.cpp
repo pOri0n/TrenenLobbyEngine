@@ -9,7 +9,6 @@ bool __stdcall SendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody
 	
 	TLE_DEBUG("SendLobbyChatMessage Called");
 
-
 	return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
 }
 
@@ -23,8 +22,8 @@ void Hooks::Init()
 void Hooks::Destroy()
 {
 	SteamMatchmaking.Release();
+	TLE_DEBUG("Hooks Released");
 }
-
 
 VMTH::~VMTH()
 {
