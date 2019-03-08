@@ -1,9 +1,8 @@
-#include <Windows.h>
-#include <util/util.h>
+#include <pch.h>
 
 auto InitThread = std::thread([]() { 
 	Logger::Get()->Init();
-
+	
 	TLE_DEBUG("PROGRAM BEGIN");
 
 

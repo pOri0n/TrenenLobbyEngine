@@ -1,6 +1,4 @@
-#include <Windows.h>
-#include <iostream>
-#include <util/util.h>
+#include <pch.h>
 
 Singleton_CPP(Logger);
 
