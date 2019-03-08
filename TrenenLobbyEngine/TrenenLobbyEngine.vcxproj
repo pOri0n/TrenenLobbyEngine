@@ -87,6 +87,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cheat\hooking\Hooks.cpp" />
+    <ClCompile Include="engine\interfaces.cpp" />
     <ClCompile Include="entry\EntryPoint.cpp" />
     <ClCompile Include="util\logging\logging.cpp" />
     <ClCompile Include="pch.cpp">
@@ -95,6 +97,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cheat\cheat.h" />
+    <ClInclude Include="cheat\hooking\Hooks.h" />
+    <ClInclude Include="engine\engine.h" />
+    <ClInclude Include="engine\interfaces.h" />
+    <ClInclude Include="SDK\SDK.h" />
     <ClInclude Include="util\logging\logging.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="util\SingletonMacro.h" />

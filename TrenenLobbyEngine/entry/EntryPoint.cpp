@@ -5,11 +5,17 @@ auto InitThread = std::thread([]() {
 	
 	TLE_DEBUG("PROGRAM BEGIN");
 
-
+	I.Setup();
+	Hooks::Get()->Init();
 	
 	
 	
 	});
+
+auto DestroyThread = []() {
+	Hooks::Get()->Destroy();
+	Logger::Get()->Destroy();
+};
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
@@ -19,7 +25,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 		InitThread.detach();
 		return TRUE;
 	case DLL_PROCESS_DETACH:
-
+		DestroyThread();
 		return TRUE;
 	default:
 		return TRUE;
