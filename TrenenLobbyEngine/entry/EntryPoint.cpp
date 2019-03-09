@@ -3,7 +3,9 @@
 auto InitThread = std::thread([]() { 
 	Logger::Get()->Init();
 	
-	TLE_DEBUG("PROGRAM BEGIN");
+	TLE_WARN("Trenen Engine is a module which allows users to quickly modify lobby chat communications");
+	TLE_WARN("       This is for example only and is the minimum nessissary code to have a functioning lobby mod");
+	TLE_WARN("       Developers should properly parse the lobby messages instead of doing it the lazy way");
 
 	I.Setup();
 	Hooks::Get()->Init();
