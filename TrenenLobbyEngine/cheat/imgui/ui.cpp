@@ -66,7 +66,7 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 	if (IsOpen)
 	{
-		ImGui::Begin("TrenenLobbyEngine", &IsOpen, ImVec2(300, 200), 0.9f, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+		ImGui::Begin("Trenen's Lobby Engine", &IsOpen, ImVec2(300, 200), 0.9f, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 		{
 			ImGui::Checkbox("Modify Chat Messages", &CFG->LobbyChat_Enable);
 
@@ -85,7 +85,6 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 			ImGui::Checkbox("Queue Bomb", &CFG->LobbyNuke_Enable);
 			ImGui::SliderFloat("Exponent", &CFG->LobbyNuke_Exponent, 0.f, 5.f, "%.2f");
-
 		}
 		ImGui::End();
 	}
