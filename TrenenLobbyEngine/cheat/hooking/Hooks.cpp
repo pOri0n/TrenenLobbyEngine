@@ -9,6 +9,8 @@ bool __stdcall Hooked_SendLobbyChatMessage(CSteamID steamIdLobby, const void* pv
 	
 	if (!LobbyMod::Get()->InterpretLobbyMessage(steamIdLobby, pvMsgBody, cubMsgBody))
 		return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
+
+	return true;
 }
 
 HRESULT __stdcall Hooked_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
