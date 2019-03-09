@@ -1,5 +1,7 @@
 # TrenenLobbyEngine
     This is a sample application demonstating the use of modifying lobby messages to provide modified output within CSGO's lobbies.
+    
+    oh yea, and i was REALLY drunk while writing this hence the lazy parsing e.t.c.
 
 ## Important Notes
     The application does not properly parse the buffer and I am purposely not doing it properly - people who know what they are doing can properly modify the messages with a little bit of work - but this is the bare minimum work.
