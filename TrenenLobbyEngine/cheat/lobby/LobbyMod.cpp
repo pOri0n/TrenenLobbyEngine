@@ -14,8 +14,7 @@ Singleton_CPP(LobbyMod);
 	BUT IN THIS IMPLEMENTATION I AM BEING LAZY JUST TO GIVE EXAMPLE SO I CAN STOP ANSWERING QUESTIONS
 	( ++ it will be pretty obv if they just pasted entire thing cuz they wont parse shit properly :O )
 
-	also there is a very slight amount of antipasta within this just to make sure peeps dont 100% C+P :P
-	if u find it keep it hush hush (:
+	Also this WILL break after a few updates cuz im lazy but you guys can figure out how to fix it
 
 	also to my future employers yea i know this is really poorly done just ignore this project and look at my
 	other stuff <3 k thanks :)
