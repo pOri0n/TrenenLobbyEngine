@@ -45,7 +45,7 @@
     <ClCompile Include="vendor\imgui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\imgui\imgui_widgets.cpp">
+    <ClCompile Include="vendor\imgui\dx9\imgui_dx9.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -93,15 +93,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\imconfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\imgui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
