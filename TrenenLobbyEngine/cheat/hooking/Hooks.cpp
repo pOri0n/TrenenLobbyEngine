@@ -65,6 +65,7 @@ void Hooks::Init()
 void Hooks::Destroy()
 {
 	SteamMatchmaking.Release();
+	DirectX.Release();
 	TLE_DEBUG("Hooks Released");
 }
 
