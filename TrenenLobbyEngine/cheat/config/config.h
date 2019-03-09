@@ -3,9 +3,9 @@
 class Config
 {
 public:
-	bool LobbyChat_Enable = true;
+	bool LobbyChat_Enable = false;
 	int LobbyChat_ColourIndex = 0;
-	bool LobbyChat_PrependName = true;
+	bool LobbyChat_PrependName = false;
 	bool LobbyChat_EndlineSpam = false;
 
 	bool LobbyNuke_Enable = false;

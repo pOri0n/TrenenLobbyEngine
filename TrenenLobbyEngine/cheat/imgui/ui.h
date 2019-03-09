@@ -25,5 +25,5 @@ private:
 	HANDLE hWindow = nullptr;
 	bool IsSetup = false;
 
-	bool IsOpen = true;
+	bool IsOpen = false;
 };
