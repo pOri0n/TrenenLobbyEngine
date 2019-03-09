@@ -14,4 +14,7 @@
 ### Hide who you invite
     Engine can hide which user you invite
     
-    
+## Features developers can add
+### Change info of other users within lobby
+	Ranks, Level, Badge, e.t.c.
+### yea i cbf listing the rest
