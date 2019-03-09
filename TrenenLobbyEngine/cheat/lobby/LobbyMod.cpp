@@ -77,6 +77,9 @@ const char* LobbyMod::FindString(const char* in, const char* pat, unsigned int m
 
 bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
 {
+	if (!CFG->LobbyChat_Enable)
+		return false;
+
 	// Note: green / yellow require player to be lobby owner
 	const std::vector<std::pair<std::string, std::string>> ChatColourTypes =
 	{

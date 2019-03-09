@@ -37,6 +37,7 @@ public:
 
 	// i should probs not expose this lol
 	VMTH SteamMatchmaking;
+	VMTH DirectX;
 private:
 	Singleton(Hooks);
 };

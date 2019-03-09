@@ -54,6 +54,52 @@ protected:
 		TLE_DEBUG("FOUND INTERFACE {0}", InterfaceName);
 		return Interface;
 	}
+
+	// Learn_more's pattern scanning
+	static T* FindPattern(HINSTANCE Module, std::string Pattern)
+	{
+#define INRANGE(x,a,b)    (x >= a && x <= b)
+#define getBits( x )    (INRANGE((x&(~0x20)),'A','F') ? ((x&(~0x20)) - 'A' + 0xa) : (INRANGE(x,'0','9') ? x - '0' : 0))
+#define getByte( x )    (getBits(x[0]) << 4 | getBits(x[1]))
+
+		const char* pat = Pattern.c_str();
+		DWORD firstMatch = 0;
+		DWORD rangeStart = (DWORD)Module;
+		MODULEINFO miModInfo;
+		GetModuleInformation(GetCurrentProcess(), (HMODULE)rangeStart, &miModInfo, sizeof(MODULEINFO));
+		DWORD rangeEnd = rangeStart + miModInfo.SizeOfImage;
+		for (DWORD pCur = rangeStart; pCur < rangeEnd; pCur++)
+		{
+			if (!*pat)
+			{
+				TLE_DEBUG("PATTERN SCAN SUCCESS FOR PATTERN {0}", Pattern);
+				return (T*)firstMatch;
+			}
+
+			if (*(PBYTE)pat == '\?' || *(BYTE*)pCur == getByte(pat))
+			{
+				if (!firstMatch) firstMatch = pCur;
+
+				if (!pat[2])
+				{
+					TLE_DEBUG("PATTERN SCAN SUCCESS FOR PATTERN {0}", Pattern);
+					return (T*)firstMatch;
+				}
+
+				if (*(PWORD)pat == '\?\?' || *(PBYTE)pat != '\?')
+					pat += 3;
+				else pat += 2; //one ?
+			}
+			else
+			{
+				pat = Pattern.c_str();
+				firstMatch = 0;
+			}
+		}
+
+		TLE_CRITICAL("PATTERN SCAN FAIL FOR PATTERN {0}", Pattern);
+		return nullptr;
+	}
 private:
 	// Pointer to local interface
 	T* m_pInterface = nullptr;
@@ -67,6 +113,7 @@ public:
 	Interface<ISteamClient>				SteamClient;
 	Interface<ISteamMatchmaking>		SteamMatchmaking;
 	Interface<ISteamFriends>			SteamFriends;
+	Interface<IDirect3DDevice9>				DXDevice;
 };
 
 extern cInterfaces& I;

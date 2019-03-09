@@ -2,7 +2,7 @@
 
 Singleton_CPP(Hooks);
 
-bool __stdcall SendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
+bool __stdcall Hooked_SendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
 {
 	typedef bool(__thiscall* SendLobbyChatMessage_t)(ISteamMatchmaking*, CSteamID, const void*, int);
 	static auto Original_SendLobbyChatMessage = Hooks::Get()->SteamMatchmaking.Original<SendLobbyChatMessage_t>(26);
@@ -11,10 +11,52 @@ bool __stdcall SendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody
 		return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
 }
 
+HRESULT __stdcall Hooked_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
+{
+	typedef HRESULT(__stdcall * Reset_t)(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*);
+	static auto Original_Reset = Hooks::Get()->DirectX.Original<Reset_t>(16);
+	
+	TLE_TRACE("RESET");
+	
+	ImGui_ImplDX9_InvalidateDeviceObjects();
+	HRESULT Res = Original_Reset(pDevice, pPresentationParameters);
+	ImGui_ImplDX9_CreateDeviceObjects();
+	return Res;
+}
+
+HRESULT __stdcall Hooked_EndScene(IDirect3DDevice9* pDevice)
+{
+	typedef HRESULT(__stdcall * Endscene_t)(IDirect3DDevice9*);
+	static auto Original_EndScene = Hooks::Get()->DirectX.Original<Endscene_t>(42);
+
+	UI::Get()->Render(pDevice);
+
+	return Original_EndScene(pDevice);
+}
+
+WNDPROC OrigWindowProc = nullptr;
+LRESULT __stdcall Hooked_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (UI::Get()->OnWndProc(hWnd, uMsg, wParam, lParam))
+		return true;
+
+	return CallWindowProc(OrigWindowProc, hWnd, uMsg, wParam, lParam);
+}
+
 void Hooks::Init()
 {
 	SteamMatchmaking.Attach(I.SteamMatchmaking());
-	SteamMatchmaking.Hook(26, SendLobbyChatMessage);
+	SteamMatchmaking.Hook(26, Hooked_SendLobbyChatMessage);
+
+	DirectX.Attach(I.DXDevice());
+	DirectX.Hook(16, Hooked_Reset);
+	DirectX.Hook(42, Hooked_EndScene);
+
+	HWND hWindow = nullptr;
+	while (!(hWindow = FindWindowA("Valve001", NULL)))
+		std::this_thread::sleep_for(0.2s);
+	OrigWindowProc = (WNDPROC)SetWindowLongPtr(hWindow, GWL_WNDPROC, (LONG_PTR)Hooked_WndProc);
+
 	TLE_DEBUG("Hooks Applied");
 }
 

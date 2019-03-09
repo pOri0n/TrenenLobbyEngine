@@ -3,7 +3,8 @@
 class Config
 {
 public:
-	unsigned int LobbyChat_ColourIndex = 0;
+	bool LobbyChat_Enable = true;
+	int LobbyChat_ColourIndex = 0;
 	bool LobbyChat_PrependName = true;
 	bool LobbyChat_EndlineSpam = false;
 

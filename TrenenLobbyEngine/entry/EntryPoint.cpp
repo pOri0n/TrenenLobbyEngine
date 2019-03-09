@@ -7,9 +7,6 @@ auto InitThread = std::thread([]() {
 
 	I.Setup();
 	Hooks::Get()->Init();
-	
-	
-	
 	});
 
 auto DestroyThread = []() {

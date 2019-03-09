@@ -1,11 +1,14 @@
 #pragma once
 #include <Windows.h>
+#include <Psapi.h>
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
+
+#include <d3d9.h>
 
 #include <thread>
 #include <chrono>
