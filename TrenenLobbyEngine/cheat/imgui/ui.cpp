@@ -86,6 +86,14 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 			ImGui::Checkbox("Queue Bomb", &CFG->LobbyNuke_Enable);
 			ImGui::SliderFloat("Exponent", &CFG->LobbyNuke_Exponent, 0.f, 3.f, "%.2f");
+
+			ImGui::Separator();
+
+			ImGui::Checkbox("Modify Profiles", &CFG->LobbyRank_ModifyProfiles);
+			ImGui::SliderInt("Player Rank", &CFG->LobbyRank_PlayerRank, 0, 16);
+			ImGui::SliderInt("Player Level", &CFG->LobbyRank_PlayerLevel, 0, 50);
+			ImGui::Checkbox("Prime", &CFG->LobbyRank_Prime);
+
 		}
 		ImGui::End();
 	}

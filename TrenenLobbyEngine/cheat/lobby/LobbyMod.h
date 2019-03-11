@@ -14,6 +14,7 @@ private:
 	bool ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, const size_t MessageSize);
 	bool OnEnterMatchmakingQueue(CSteamID Lobby, const char* pMessage, const size_t MessageSize);
 	bool OnChatInviteMessage(CSteamID Lobby, const char* pMessage, const size_t MessageSize);
+	bool OnSetPlayerRanking(CSteamID Lobby, const char* pMessage, const size_t MessageSize);
 
 	bool CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody);
 

@@ -51,6 +51,10 @@ bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBod
 
 		else if (strcmp(MessageIterator, "Game::ChatInviteMessage") == 0)
 			return OnChatInviteMessage(steamIdLobby, pMessage, cubMsgBody);
+
+		else if (strcmp(MessageIterator, "Game::SetPlayerRanking") == 0)
+			return OnSetPlayerRanking(steamIdLobby, pMessage, cubMsgBody);
+
 	}
 
 	return false;
@@ -251,6 +255,21 @@ bool LobbyMod::OnChatInviteMessage(CSteamID Lobby, const char* pMessage, const s
 	return I.SteamMatchmaking()->SendLobbyChatMsg(Lobby, Message.data(), Message.size());
 }
 
+bool LobbyMod::OnSetPlayerRanking(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
+{
+	if (!CFG->LobbyRank_ModifyProfiles)
+		return false;
+
+	std::vector<char> Message;
+	std::copy(pMessage, pMessage + MessageSize, std::back_inserter(Message));
+
+	*(char*)(FindString(Message.data(), "level") + 9) = CFG->LobbyRank_PlayerLevel;
+	*(char*)(FindString(Message.data(), "ranking") + 11) = CFG->LobbyRank_PlayerRank;
+	*(char*)(FindString(Message.data(), "prime") + 9) = CFG->LobbyRank_Prime;
+	
+	return CallOriginalSendLobbyChatMessage(Lobby, Message.data(), Message.size());
+}
+
 bool LobbyMod::CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody)
 {
 	typedef bool(__thiscall * SendLobbyChatMessage_t)(ISteamMatchmaking*, CSteamID, const void*, int);
@@ -258,3 +277,4 @@ bool LobbyMod::CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const voi
 
 	return Original_SendLobbyChatMessage(I.SteamMatchmaking(), steamIdLobby, pvMsgBody, cubMsgBody);
 }
+

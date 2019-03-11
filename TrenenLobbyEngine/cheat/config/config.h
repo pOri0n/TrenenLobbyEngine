@@ -14,6 +14,11 @@ public:
 
 	bool LobbyInvite_HideInviteNames = false;
 
+	bool LobbyRank_ModifyProfiles = false;
+	int LobbyRank_PlayerRank = 1;
+	int LobbyRank_PlayerLevel = 2;
+	bool LobbyRank_Prime = false;
+
 private:
 	Singleton(Config);
 };
