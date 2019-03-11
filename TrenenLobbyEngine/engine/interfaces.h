@@ -112,8 +112,9 @@ public:
 
 	Interface<ISteamClient>				SteamClient;
 	Interface<ISteamMatchmaking>		SteamMatchmaking;
+	Interface<ISteamUser>				SteamUser;
 	Interface<ISteamFriends>			SteamFriends;
-	Interface<IDirect3DDevice9>				DXDevice;
+	Interface<IDirect3DDevice9>			DXDevice;
 };
 
 extern cInterfaces& I;

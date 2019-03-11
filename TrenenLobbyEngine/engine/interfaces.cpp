@@ -20,6 +20,7 @@ void cInterfaces::Setup()
 
 	SteamMatchmaking = SteamClient()->GetISteamMatchmaking(GetHSteamUser(), GetHSteamPipe(), "SteamMatchMaking009");
 	SteamFriends = SteamClient()->GetISteamFriends(GetHSteamUser(), GetHSteamPipe(), "SteamFriends015");
+	SteamUser = SteamClient()->GetISteamUser(GetHSteamUser(), GetHSteamPipe(), "SteamUser019");
 
 	DXDevice = Interface<>::FindPattern(ShaderDLLHandle, "A1 ?? ?? ?? ?? 50 8B 08 FF 51 0C");
 	DXDevice = (IDirect3DDevice9*)**(DWORD**)((DWORD)DXDevice() + 1);
