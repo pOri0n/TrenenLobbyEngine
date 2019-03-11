@@ -6,6 +6,7 @@ public:
 	// returns true if message has been overwritten
 	bool InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody);
 
+	bool DoesOwnCurrentLobby() const { return IsLobbyOwner; }
 private:
 	// a few easy things to get around the file fast AF
 	const char* FindStringEnd(const char* Message);
@@ -18,6 +19,8 @@ private:
 	bool OnPlayerUpdated(CSteamID Lobby, const char* pMessage, const size_t MessageSize);
 
 	bool CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody);
+
+	bool IsLobbyOwner = false;
 
 private:
 	Singleton(LobbyMod);

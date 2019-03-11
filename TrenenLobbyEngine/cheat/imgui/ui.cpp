@@ -71,8 +71,12 @@ void UI::Render(IDirect3DDevice9* pDevice)
 			ImGui::Checkbox("Modify Chat Messages", &CFG->LobbyChat_Enable);
 
 			const char* ChatColours[] = { "Standard", "Red", "Green", "Yellow" };
+			const char* ChatColoursNonOwner[] = { "Standard", "Red" };
 
-			ImGui::Combo("Chat Colour", &CFG->LobbyChat_ColourIndex, ChatColours, ARRAYSIZE(ChatColours));
+			if (LobbyMod::Get()->DoesOwnCurrentLobby())
+				ImGui::Combo("Chat Colour", &CFG->LobbyChat_ColourIndex, ChatColours, ARRAYSIZE(ChatColours));
+			else
+				ImGui::Combo("Chat Colour", &CFG->LobbyChat_ColourIndex, ChatColoursNonOwner, ARRAYSIZE(ChatColoursNonOwner));
 
 			ImGui::Checkbox("Prepend Name", &CFG->LobbyChat_PrependName);
 			ImGui::Checkbox("Endline Spam", &CFG->LobbyChat_EndlineSpam);
@@ -82,10 +86,13 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 			ImGui::Checkbox("Hide Invite Names", &CFG->LobbyInvite_HideInviteNames);
 
-			ImGui::Separator();
+			if (LobbyMod::Get()->DoesOwnCurrentLobby())
+			{
+				ImGui::Separator();
 
-			ImGui::Checkbox("Queue Bomb", &CFG->LobbyNuke_Enable);
-			ImGui::SliderFloat("Exponent", &CFG->LobbyNuke_Exponent, 0.f, 3.f, "%.2f");
+				ImGui::Checkbox("Queue Bomb", &CFG->LobbyNuke_Enable);
+				ImGui::SliderFloat("Exponent", &CFG->LobbyNuke_Exponent, 0.f, 3.f, "%.2f");
+			}
 
 			ImGui::Separator();
 
@@ -95,12 +102,14 @@ void UI::Render(IDirect3DDevice9* pDevice)
 			ImGui::SliderInt("Player Level", &CFG->LobbyRank_PlayerLevel, 0, 50);
 			ImGui::Checkbox("Prime", &CFG->LobbyRank_Prime);
 
-			ImGui::Separator();
+			if (LobbyMod::Get()->DoesOwnCurrentLobby())
+			{
+				ImGui::Separator();
 
-			ImGui::SliderInt("Others Player Rank", &CFG->LobbyRank_OtherPlayersRank, 0, 18);
-			ImGui::SliderInt("Others Player Level", &CFG->LobbyRank_OtherPlayersLevel, 0, 50);
-			ImGui::Checkbox("Others Prime Status", &CFG->LobbyRank_OtherPlayersPrime);
-
+				ImGui::SliderInt("Others Player Rank", &CFG->LobbyRank_OtherPlayersRank, 0, 18);
+				ImGui::SliderInt("Others Player Level", &CFG->LobbyRank_OtherPlayersLevel, 0, 50);
+				ImGui::Checkbox("Others Prime Status", &CFG->LobbyRank_OtherPlayersPrime);
+			}
 		}
 		ImGui::End();
 	}

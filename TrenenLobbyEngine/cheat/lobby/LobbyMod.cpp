@@ -26,6 +26,12 @@ bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBod
 	const char* pMessage = (const char*)pvMsgBody;
 	const char* MessageIterator = pMessage + 5; // 5 Bytes in we have the big SysSession::Command
 
+
+	auto steamIdOwner = I.SteamMatchmaking()->GetLobbyOwner(steamIdLobby);
+	auto steamIdMe = I.SteamUser()->GetSteamID();
+
+	IsLobbyOwner = steamIdOwner == steamIdMe;
+
 #if 0
 	// For those who wish to look at the structure of the messages
 	auto DumpFile = std::ofstream("LobbyChatMessageDump.bin", std::ios::binary | std::ios::trunc);
