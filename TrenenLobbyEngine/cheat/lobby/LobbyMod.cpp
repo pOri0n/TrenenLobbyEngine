@@ -268,6 +268,9 @@ bool LobbyMod::OnSetPlayerRanking(CSteamID Lobby, const char* pMessage, const si
 	*(char*)(FindString(Message.data(), "level") + 9) = CFG->LobbyRank_PlayerLevel;
 	*(char*)(FindString(Message.data(), "ranking") + 11) = CFG->LobbyRank_PlayerRank;
 	*(char*)(FindString(Message.data(), "prime") + 9) = CFG->LobbyRank_Prime;
+
+	if (*(char*)(FindString(Message.data(), "wins") + 8) < 10)
+		* (char*)(FindString(Message.data(), "wins") + 8) = 10;
 	
 	return CallOriginalSendLobbyChatMessage(Lobby, Message.data(), Message.size());
 }
@@ -283,6 +286,9 @@ bool LobbyMod::OnPlayerUpdated(CSteamID Lobby, const char* pMessage, const size_
 	*(char*)(FindString(Message.data(), "level") + 9) = CFG->LobbyRank_PlayerLevel;
 	*(char*)(FindString(Message.data(), "ranking") + 11) = CFG->LobbyRank_PlayerRank;
 	*(char*)(FindString(Message.data(), "prime") + 9) = CFG->LobbyRank_Prime;
+
+	if (*(char*)(FindString(Message.data(), "wins") + 8) < 10)
+		* (char*)(FindString(Message.data(), "wins") + 8) = 10;
 
 	return CallOriginalSendLobbyChatMessage(Lobby, Message.data(), Message.size());
 }
