@@ -56,7 +56,9 @@ bool LobbyMod::InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBod
 			return OnSetPlayerRanking(steamIdLobby, pMessage, cubMsgBody);
 
 	}
-
+	else if (strcmp(MessageIterator, "SysSession::OnPlayerUpdated") == 0)
+		return OnPlayerUpdated(steamIdLobby, pMessage, cubMsgBody);
+	
 	return false;
 }
 
@@ -267,6 +269,21 @@ bool LobbyMod::OnSetPlayerRanking(CSteamID Lobby, const char* pMessage, const si
 	*(char*)(FindString(Message.data(), "ranking") + 11) = CFG->LobbyRank_PlayerRank;
 	*(char*)(FindString(Message.data(), "prime") + 9) = CFG->LobbyRank_Prime;
 	
+	return CallOriginalSendLobbyChatMessage(Lobby, Message.data(), Message.size());
+}
+
+bool LobbyMod::OnPlayerUpdated(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
+{
+	if (!CFG->LobbyRank_ModifyProfiles)
+		return false;
+
+	std::vector<char> Message;
+	std::copy(pMessage, pMessage + MessageSize, std::back_inserter(Message));
+
+	*(char*)(FindString(Message.data(), "level") + 9) = CFG->LobbyRank_PlayerLevel;
+	*(char*)(FindString(Message.data(), "ranking") + 11) = CFG->LobbyRank_PlayerRank;
+	*(char*)(FindString(Message.data(), "prime") + 9) = CFG->LobbyRank_Prime;
+
 	return CallOriginalSendLobbyChatMessage(Lobby, Message.data(), Message.size());
 }
 

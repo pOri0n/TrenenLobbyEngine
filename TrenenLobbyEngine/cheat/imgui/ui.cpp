@@ -89,10 +89,17 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 			ImGui::Separator();
 
-			ImGui::Checkbox("Modify Profiles", &CFG->LobbyRank_ModifyProfiles);
-			ImGui::SliderInt("Player Rank", &CFG->LobbyRank_PlayerRank, 0, 16);
+			ImGui::Checkbox("Modify Player Profiles", &CFG->LobbyRank_ModifyProfiles);
+
+			ImGui::SliderInt("Player Rank", &CFG->LobbyRank_PlayerRank, 0, 18);
 			ImGui::SliderInt("Player Level", &CFG->LobbyRank_PlayerLevel, 0, 50);
 			ImGui::Checkbox("Prime", &CFG->LobbyRank_Prime);
+
+			ImGui::Separator();
+
+			ImGui::SliderInt("Others Player Rank", &CFG->LobbyRank_OtherPlayersRank, 0, 18);
+			ImGui::SliderInt("Others Player Level", &CFG->LobbyRank_OtherPlayersLevel, 0, 50);
+			ImGui::Checkbox("Others Prime Status", &CFG->LobbyRank_OtherPlayersPrime);
 
 		}
 		ImGui::End();

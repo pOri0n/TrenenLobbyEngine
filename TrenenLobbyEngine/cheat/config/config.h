@@ -19,6 +19,10 @@ public:
 	int LobbyRank_PlayerLevel = 2;
 	bool LobbyRank_Prime = false;
 
+	int LobbyRank_OtherPlayersRank = 1;
+	int LobbyRank_OtherPlayersLevel = 2;
+	bool LobbyRank_OtherPlayersPrime = false;
+
 private:
 	Singleton(Config);
 };
