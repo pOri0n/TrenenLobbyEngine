@@ -57,6 +57,7 @@ void Hooks::Init()
 	HWND hWindow = nullptr;
 	while (!(hWindow = FindWindowA("Valve001", NULL)))
 		std::this_thread::sleep_for(0.2s);
+
 	OrigWindowProc = (WNDPROC)SetWindowLongPtr(hWindow, GWL_WNDPROC, (LONG_PTR)Hooked_WndProc);
 
 	TLE_DEBUG("Hooks Applied");

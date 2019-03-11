@@ -7,6 +7,7 @@ public:
 	int LobbyChat_ColourIndex = 0;
 	bool LobbyChat_PrependName = false;
 	bool LobbyChat_EndlineSpam = false;
+	float LobbyChat_RepeatExponent = 0.0f;
 
 	bool LobbyNuke_Enable = false;
 	float LobbyNuke_Exponent = 1.0f;

@@ -181,7 +181,12 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	
 	std::copy(MessageStage3.begin(), MessageStage3.end(), std::back_inserter(GeneratedMessage));
 
-	return CallOriginalSendLobbyChatMessage(Lobby, GeneratedMessage.data(), GeneratedMessage.size());
+	const auto RepPower = std::powf(10, CFG->LobbyChat_RepeatExponent);
+
+	for (auto i = 0.f; i < RepPower; i++)
+		 CallOriginalSendLobbyChatMessage(Lobby, GeneratedMessage.data(), GeneratedMessage.size());
+
+	return true;
 }
 
 bool LobbyMod::OnEnterMatchmakingQueue(CSteamID Lobby, const char* pMessage, const size_t MessageSize)

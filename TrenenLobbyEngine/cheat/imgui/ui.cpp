@@ -76,6 +76,7 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 			ImGui::Checkbox("Prepend Name", &CFG->LobbyChat_PrependName);
 			ImGui::Checkbox("Endline Spam", &CFG->LobbyChat_EndlineSpam);
+			ImGui::SliderFloat("Repeat Exponent", &CFG->LobbyChat_RepeatExponent, 0.f, 3.f, "%.2f");
 
 			ImGui::Separator();
 
@@ -84,7 +85,7 @@ void UI::Render(IDirect3DDevice9* pDevice)
 			ImGui::Separator();
 
 			ImGui::Checkbox("Queue Bomb", &CFG->LobbyNuke_Enable);
-			ImGui::SliderFloat("Exponent", &CFG->LobbyNuke_Exponent, 0.f, 5.f, "%.2f");
+			ImGui::SliderFloat("Exponent", &CFG->LobbyNuke_Exponent, 0.f, 3.f, "%.2f");
 		}
 		ImGui::End();
 	}
