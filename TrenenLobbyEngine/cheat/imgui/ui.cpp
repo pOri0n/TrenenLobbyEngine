@@ -66,7 +66,7 @@ void UI::Render(IDirect3DDevice9* pDevice)
 
 	if (IsOpen)
 	{
-		ImGui::Begin("Trenen's Lobby Engine", &IsOpen, ImVec2(300, 200), 0.9f, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+		ImGui::Begin("Trenen's Lobby Engine", &IsOpen, ImVec2(300, 200), 0.9f, ImGuiWindowFlags_NoCollapse);
 		{
 			ImGui::Checkbox("Modify Chat Messages", &CFG->LobbyChat_Enable);
 
