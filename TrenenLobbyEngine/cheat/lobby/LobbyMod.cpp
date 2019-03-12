@@ -259,7 +259,7 @@ bool LobbyMod::OnChatInviteMessage(CSteamID Lobby, const char* pMessage, const s
 
 	TLE_INFO("Game::ChatInviteMessage - REPLACED PLAYER NAME WITH {0}", PlayerName);
 
-	return I.SteamMatchmaking()->SendLobbyChatMsg(Lobby, Message.data(), Message.size());
+	return CallOriginalSendLobbyChatMessage(Lobby, Message.data(), Message.size());
 }
 
 bool LobbyMod::OnSetPlayerRanking(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
