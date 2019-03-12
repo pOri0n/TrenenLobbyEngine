@@ -91,13 +91,17 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	if (!CFG->LobbyChat_Enable)
 		return false;
 
+	if (CFG->LobbyChat_ColourIndex == 0)
+		return false;
+
 	// Note: green / yellow require player to be lobby owner
 	const std::vector<std::pair<std::string, std::string>> ChatColourTypes =
 	{
-		{ "Game::Chat",				"chat"	 }, // Standard
-		{ "Game::ChatReportError",	"error"  }, // Red
-		{ "Game::ChatReportGreen",	"green"  }, // well i mean really do i have to spell it out for these two
-		{ "Game::ChatReportYellow", "yellow" }
+		{ "Game::Chat",							"chat"	 }, // Standard // no longer in use
+		{ "Game::ChatReportMatchmakingStatus",	"status" }, // lets user define custom font colour :O
+		{ "Game::ChatReportError",				"error"  }, // Red
+		{ "Game::ChatReportGreen",				"green"  }, // well i mean really do i have to spell it out for these two
+		{ "Game::ChatReportYellow",				"yellow" }
 	};
 
 	const auto ChatColour = ChatColourTypes[ CFG->LobbyChat_ColourIndex ];
@@ -150,9 +154,6 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 		0x00, 0x0b, 0x0b, 0x0b
 	};
 
-	// Your message is always stored right after chat
-	const auto MessageText = std::string(FindString(pMessage, "chat") + 5);
-
 	// Generate Our Message
 	auto GeneratedMessage = MessageStage0;
 
@@ -163,20 +164,14 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	std::copy(ChatColour.second.begin(), ChatColour.second.end(), std::back_inserter(GeneratedMessage));
 	GeneratedMessage.push_back(0); // strings dont seem to copy over null terminator :(
 
-	// if user wants their username within the chat message
-	// useful if u wanna type and look cool and show ur name
-	// but if turned off u can type shit like
-	// "PLAYER has been convicted by overwatch"
-	// and troll other people
+	// Your message is always stored right after chat
+	const auto MessageText = std::string(FindString(pMessage, "chat") + 5);
+	const auto NameText = std::string(FindString(pMessage, "name") + 5) + " ";
 
-	if (CFG->LobbyChat_ColourIndex != 0 && CFG->LobbyChat_PrependName)
-	{
-		const auto NameText = std::string(FindString(pMessage, "name") + 5) + " ";
-		std::copy(NameText.begin(), NameText.end(), std::back_inserter(GeneratedMessage));
-	}
+	const auto Text = fmt::format(CFG->LobbyChat_Format, NameText, MessageText);
 
 	// insert our custom message
-	std::copy(MessageText.begin(), MessageText.end(), std::back_inserter(GeneratedMessage));
+	std::copy(Text.begin(), Text.end(), std::back_inserter(GeneratedMessage));
 
 	// Sending enough messages will cause the chat box
 	// in CS to break!, probably a layout glitch
