@@ -171,9 +171,9 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 	if (CFG->LobbyChat_ColourIndex == Color_Custom) 
 		Text = fmt::format(CFG->LobbyChat_Format, NameText, MessageText); // user defined custom format
 	else if (CFG->LobbyChat_PrependName)
-		fmt::format("{0} {1}", NameText, MessageText);
+		Text = fmt::format("{0} {1}", NameText, MessageText);
 	else
-		fmt::format("{1}", NameText, MessageText);
+		Text = fmt::format("{1}", NameText, MessageText);
 
 	std::copy(Text.begin(), Text.end(), std::back_inserter(GeneratedMessage));
 
