@@ -5,7 +5,7 @@
 
 ## Features Available
 ### Chat Colours
-    Standard, Red, Green, Yellow
+    Standard, Custom (user inputted formatting including custom XML), Red, Green, Yellow
 ### Endline Spammer
     Breaks layout of chatbox if a few of these messages are sent!
 ### Queue Bomb
