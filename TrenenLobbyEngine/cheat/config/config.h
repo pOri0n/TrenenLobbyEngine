@@ -3,12 +3,11 @@
 class Config
 {
 public:
-	bool LobbyChat_Enable = false;
 	int LobbyChat_ColourIndex = 0;
 	bool LobbyChat_EndlineSpam = false;
+	bool LobbyChat_PrependName = false;
 	float LobbyChat_RepeatExponent = 0.0f;
-
-	char LobbyChat_Format[256] = "{0} {1}";
+	char LobbyChat_Format[256] = "<font color=\"#F0F\">{0}</font> {1}";
 
 	bool LobbyNuke_Enable = false;
 	float LobbyNuke_Exponent = 1.0f;

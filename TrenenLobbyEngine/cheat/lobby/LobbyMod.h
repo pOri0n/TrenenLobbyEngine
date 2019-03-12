@@ -7,6 +7,15 @@ public:
 	bool InterpretLobbyMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody);
 
 	bool DoesOwnCurrentLobby() const { return IsLobbyOwner; }
+
+	enum LobbyChatColours {
+		Color_Standard = 0,
+		Color_Custom,
+		Color_Error,
+		Color_Green,
+		Color_Yellow
+	};
+
 private:
 	// a few easy things to get around the file fast AF
 	const char* FindStringEnd(const char* Message);
@@ -21,6 +30,7 @@ private:
 	bool CallOriginalSendLobbyChatMessage(CSteamID steamIdLobby, const void* pvMsgBody, int cubMsgBody);
 
 	bool IsLobbyOwner = false;
+
 
 private:
 	Singleton(LobbyMod);

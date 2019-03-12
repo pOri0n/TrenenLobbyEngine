@@ -68,19 +68,24 @@ void UI::Render(IDirect3DDevice9* pDevice)
 	{
 		ImGui::Begin("Trenen's Lobby Engine", &IsOpen, ImVec2(300, 200), 0.9f, ImGuiWindowFlags_NoCollapse);
 		{
-			ImGui::Checkbox("Modify Chat Messages", &CFG->LobbyChat_Enable);
-
-			const char* ChatColours[] = { "Standard", "Custom", "Red", "Green", "Yellow" };
-			const char* ChatColoursNonOwner[] = { "Standard", "Custom", "Red" };
+			const char* ChatColours[] = { "Off", "Custom", "Red", "Green", "Yellow" };
+			const char* ChatColoursNonOwner[] = { "Off", "Custom", "Red" };
 
 			if (LobbyMod::Get()->DoesOwnCurrentLobby())
 				ImGui::Combo("Chat Colour", &CFG->LobbyChat_ColourIndex, ChatColours, ARRAYSIZE(ChatColours));
 			else
 				ImGui::Combo("Chat Colour", &CFG->LobbyChat_ColourIndex, ChatColoursNonOwner, ARRAYSIZE(ChatColoursNonOwner));
 
-			ImGui::InputText("Chat Format", CFG->LobbyChat_Format, 256);
-			ImGui::Checkbox("Endline Spam", &CFG->LobbyChat_EndlineSpam);
-			ImGui::SliderFloat("Repeat Exponent", &CFG->LobbyChat_RepeatExponent, 0.f, 3.f, "%.2f");
+			if (CFG->LobbyChat_ColourIndex != LobbyMod::Color_Standard)
+			{
+				if (CFG->LobbyChat_ColourIndex == LobbyMod::Color_Custom)
+					ImGui::InputText("Chat Format", CFG->LobbyChat_Format, 256);
+				else
+					ImGui::Checkbox("Prepend Name", &CFG->LobbyChat_PrependName);
+
+				ImGui::Checkbox("Endline Spam", &CFG->LobbyChat_EndlineSpam);
+				ImGui::SliderFloat("Repeat Exponent", &CFG->LobbyChat_RepeatExponent, 0.f, 3.f, "%.2f");
+			}
 
 			ImGui::Separator();
 

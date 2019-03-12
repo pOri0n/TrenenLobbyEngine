@@ -88,10 +88,7 @@ const char* LobbyMod::FindString(const char* in, const char* pat, unsigned int m
 
 bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, const size_t MessageSize)
 {
-	if (!CFG->LobbyChat_Enable)
-		return false;
-
-	if (CFG->LobbyChat_ColourIndex == 0)
+	if (CFG->LobbyChat_ColourIndex == Color_Standard)
 		return false;
 
 	// Note: green / yellow require player to be lobby owner
@@ -166,11 +163,18 @@ bool LobbyMod::ModifyStandardChatMessage(CSteamID Lobby, const char* pMessage, c
 
 	// Your message is always stored right after chat
 	const auto MessageText = std::string(FindString(pMessage, "chat") + 5);
-	const auto NameText = std::string(FindString(pMessage, "name") + 5) + " ";
+	const auto NameText = std::string(FindString(pMessage, "name") + 5);
 
-	const auto Text = fmt::format(CFG->LobbyChat_Format, NameText, MessageText);
+	std::string Text = "";// fmt::format(CFG->LobbyChat_Format, NameText, MessageText);
 
 	// insert our custom message
+	if (CFG->LobbyChat_ColourIndex == Color_Custom) 
+		Text = fmt::format(CFG->LobbyChat_Format, NameText, MessageText); // user defined custom format
+	else if (CFG->LobbyChat_PrependName)
+		fmt::format("{0} {1}", NameText, MessageText);
+	else
+		fmt::format("{1}", NameText, MessageText);
+
 	std::copy(Text.begin(), Text.end(), std::back_inserter(GeneratedMessage));
 
 	// Sending enough messages will cause the chat box
