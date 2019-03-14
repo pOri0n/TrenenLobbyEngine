@@ -18,8 +18,6 @@ HRESULT __stdcall Hooked_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS*
 	typedef HRESULT(__stdcall * Reset_t)(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*);
 	static auto Original_Reset = Hooks::Get()->DirectX.Original<Reset_t>(16);
 	
-	TLE_TRACE("RESET");
-	
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 	HRESULT Res = Original_Reset(pDevice, pPresentationParameters);
 	ImGui_ImplDX9_CreateDeviceObjects();
